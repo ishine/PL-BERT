@@ -49,9 +49,12 @@ def process_shard(i):
         return
     print('Processing shard %d ...' % i)
     shard = dataset.shard(num_shards=num_shards, index=i)
+    print('Shard %d loaded' % i)
     processed_dataset = shard.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
+    print('Shard %d processed' % i)
     if not os.path.exists(directory):
         os.makedirs(directory)
+    print('Shard %d saved' % i)
     processed_dataset.save_to_disk(directory)
 
 from pebble import ProcessPool
