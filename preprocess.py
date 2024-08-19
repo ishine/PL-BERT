@@ -29,9 +29,10 @@ _chinese_punctuation = "。 ， ； ： ？ ！ …… 、 “ ” ‘ ’ 「 �
 
 def phonemize(text, tokenizer):
     """Convert Chinese text to phonemes using phonemizer."""
-
+    print(text)
+    print()
     words = tokenizer.tokenize(text)
-    phonemes_bad = [lazy_pinyin(text, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
+    phonemes_bad = [lazy_pinyin(word, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
 
     input_ids = [tokenizer.encode(word)[0] for word in words]
     phonemes = [p for p in phonemes_bad]
@@ -80,7 +81,7 @@ def phonemize(text, tokenizer):
 
 # dataset = concatenate_datasets(datasets)
 dataset = Dataset.from_dict(dataset)
-processed_dataset = dataset.map(lambda t: phonemize(t['text'][0], tokenizer), remove_columns=['text'], batched=False)
+processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), batched=False)
 # dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
 processed_dataset.push_to_hub("Evan-Lin/wiki-phoneme", private=False)
