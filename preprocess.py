@@ -80,7 +80,7 @@ def phonemize(text, tokenizer):
 
 # dataset = concatenate_datasets(datasets)
 dataset = Dataset.from_dict(dataset)
-processed_dataset = dataset.map(lambda t: phonemize(t['text'][0], tokenizer), remove_columns=['text'], batched=True)
+processed_dataset = dataset.map(lambda t: phonemize(t['text'][0], tokenizer), remove_columns=['text'], batched=False)
 # dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
 dataset.push_to_hub("Evan-Lin/wiki-phoneme", private=True)
