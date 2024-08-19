@@ -13,7 +13,8 @@ tokenizer = BertTokenizer.from_pretrained(config['dataset_params']['tokenizer'])
 dataset =load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
 dataset = dataset[:1000]
 root_directory = "./wiki_phoneme" # set up root directory for multiprocessor processing
-
+if not os.path.exists(root_directory):
+    os.makedirs(root_directory)
 
 def text_normalize(text):
     # Regular expression to match digits and non-Chinese characters
