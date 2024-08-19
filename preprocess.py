@@ -1,7 +1,7 @@
 import os
 import re
 import yaml
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 from transformers import BertTokenizer, BertModel
 from pypinyin import pinyin, lazy_pinyin, Style
 
@@ -40,32 +40,32 @@ def phonemize(text, tokenizer):
     return {'input_ids' : input_ids, 'phonemes': phonemes}
 
 
-num_shards = 50000
+# num_shards = 1
 
-def process_shard(i):
-    directory = root_directory + "/shard_" + str(i)
-    if os.path.exists(directory):
-        print("Shard %d already exists!" % i)
-        return
-    print('Processing shard %d ...' % i)
-    shard = dataset.shard(num_shards=num_shards, index=i)
-    print('Shard %d loaded' % i)
-    processed_dataset = shard.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
-    print('Shard %d processed' % i)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    print('Shard %d saved' % i)
-    processed_dataset.save_to_disk(directory)
+# def process_shard(i):
+#     directory = root_directory + "/shard_" + str(i)
+#     if os.path.exists(directory):
+#         print("Shard %d already exists!" % i)
+#         return
+#     print('Processing shard %d ...' % i)
+#     shard = dataset.shard(num_shards=num_shards, index=i)
+#     print('Shard %d loaded' % i)
+#     processed_dataset = shard.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
+#     print('Shard %d processed' % i)
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
+#     print('Shard %d saved' % i)
+#     processed_dataset.save_to_disk(directory)
 
-from pebble import ProcessPool
-from concurrent.futures import TimeoutError
+# from pebble import ProcessPool
+# from concurrent.futures import TimeoutError
 
-max_workers = 16 # change this to the number of CPU cores your machine has 
+# max_workers = 16 # change this to the number of CPU cores your machine has 
 
-with ProcessPool(max_workers=max_workers) as pool:
-    pool.map(process_shard, range(num_shards), timeout=60)
+# with ProcessPool(max_workers=max_workers) as pool:
+#     pool.map(process_shard, range(num_shards), timeout=60)
 
-from datasets import load_from_disk, concatenate_datasets
+# from datasets import load_from_disk, concatenate_datasets
 
 # output = [dI for dI in os.listdir(root_directory) if os.path.isdir(os.path.join(root_directory,dI))]
 # datasets = []
@@ -79,7 +79,8 @@ from datasets import load_from_disk, concatenate_datasets
 #         continue
 
 # dataset = concatenate_datasets(datasets)
-processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
+dataset = Dataset.from_dict(dataset)
+processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'], batched=True)
 # dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
 dataset.push_to_hub("Evan-Lin/wiki-phoneme", private=True)
