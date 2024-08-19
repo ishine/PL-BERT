@@ -4,6 +4,7 @@ import yaml
 from datasets import load_dataset, Dataset
 from transformers import BertTokenizer, BertModel
 from pypinyin import pinyin, lazy_pinyin, Style
+import concurrent.futures
 
 config_path = "Configs/config.yml" # you can change it to anything else
 config = yaml.safe_load(open(config_path))
@@ -29,8 +30,8 @@ _chinese_punctuation = "。 ， ； ： ？ ！ …… 、 “ ” ‘ ’ 「 �
 
 def phonemize(text, tokenizer):
     """Convert Chinese text to phonemes using phonemizer."""
-    print(text)
-    print()
+    # print(text)
+    # print()
     words = tokenizer.tokenize(text)
     phonemes_bad = [lazy_pinyin(word, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
 
