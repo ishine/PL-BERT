@@ -10,7 +10,7 @@ config = yaml.safe_load(open(config_path))
 
 tokenizer = BertTokenizer.from_pretrained(config['dataset_params']['tokenizer']) # you can use any other tokenizers if you want to
 
-dataset =load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
+dataset = load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
 dataset = dataset[:1000]
 root_directory = "./wiki_phoneme" # set up root directory for multiprocessor processing
 if not os.path.exists(root_directory):
@@ -67,16 +67,16 @@ with ProcessPool(max_workers=max_workers) as pool:
 
 from datasets import load_from_disk, concatenate_datasets
 
-output = [dI for dI in os.listdir(root_directory) if os.path.isdir(os.path.join(root_directory,dI))]
-datasets = []
-for o in output:
-    directory = root_directory + "/" + o
-    try:
-        shard = load_from_disk(directory)
-        datasets.append(shard)
-        print("%s loaded" % o)
-    except:
-        continue
+# output = [dI for dI in os.listdir(root_directory) if os.path.isdir(os.path.join(root_directory,dI))]
+# datasets = []
+# for o in output:
+#     directory = root_directory + "/" + o
+#     try:
+#         shard = load_from_disk(directory)
+#         datasets.append(shard)
+#         print("%s loaded" % o)
+#     except:
+#         continue
 
 # dataset = concatenate_datasets(datasets)
 processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
