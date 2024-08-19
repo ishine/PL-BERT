@@ -78,8 +78,9 @@ for o in output:
     except:
         continue
 
-dataset = concatenate_datasets(datasets)
-dataset.save_to_disk(config['data_folder'])
+# dataset = concatenate_datasets(datasets)
+processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), remove_columns=['text'])
+# dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
 dataset.push_to_hub("Evan-Lin/wiki-phoneme", private=True)
 
