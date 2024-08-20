@@ -12,7 +12,7 @@ config = yaml.safe_load(open(config_path))
 tokenizer = BertTokenizer.from_pretrained(config['dataset_params']['tokenizer']) # you can use any other tokenizers if you want to
 
 dataset = load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
-dataset = dataset[:1000]
+# dataset = dataset[:1000]
 root_directory = "./wiki_phoneme" # set up root directory for multiprocessor processing
 if not os.path.exists(root_directory):
     os.makedirs(root_directory)
@@ -82,7 +82,7 @@ def phonemize(text, tokenizer):
 
 # dataset = concatenate_datasets(datasets)
 dataset = Dataset.from_dict(dataset)
-processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), batched=False)
+processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), batched=False, num_proc=24)
 # dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
 processed_dataset.push_to_hub("Evan-Lin/wiki-phoneme", private=False)
