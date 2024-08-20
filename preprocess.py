@@ -12,7 +12,7 @@ config = yaml.safe_load(open(config_path))
 tokenizer = BertTokenizer.from_pretrained(config['dataset_params']['tokenizer']) # you can use any other tokenizers if you want to
 
 dataset = load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
-dataset = dataset[:10]
+# dataset = dataset[:10]
 root_directory = "./wiki_phoneme" # set up root directory for multiprocessor processing
 if not os.path.exists(root_directory):
     os.makedirs(root_directory)
