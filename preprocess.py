@@ -12,7 +12,7 @@ config = yaml.safe_load(open(config_path))
 tokenizer = BertTokenizer.from_pretrained(config['dataset_params']['tokenizer']) # you can use any other tokenizers if you want to
 
 dataset = load_dataset("wikipedia", language="zh", date="20240720", trust_remote_code=True)['train']
-# dataset = dataset[:1000]
+dataset = dataset[:10]
 root_directory = "./wiki_phoneme" # set up root directory for multiprocessor processing
 if not os.path.exists(root_directory):
     os.makedirs(root_directory)
@@ -35,7 +35,7 @@ def phonemize(text, tokenizer):
     words = tokenizer.tokenize(text)
     phonemes_bad = [lazy_pinyin(word, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
 
-    input_ids = [tokenizer.encode(word)[0] for word in words]
+    input_ids = [tokenizer.encode(word) for word in words]
     phonemes = [p for p in phonemes_bad]
     
     assert len(input_ids) == len(phonemes)
