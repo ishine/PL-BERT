@@ -81,7 +81,7 @@ def phonemize(text, tokenizer):
 #         continue
 
 # dataset = concatenate_datasets(datasets)
-dataset = Dataset.from_dict(dataset)
+# dataset = Dataset.from_dict(dataset)
 processed_dataset = dataset.map(lambda t: phonemize(t['text'], tokenizer), batched=False, num_proc=24)
 # dataset.save_to_disk(config['data_folder'])
 print('Dataset saved to %s' % config['data_folder'])
