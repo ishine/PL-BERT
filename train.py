@@ -16,6 +16,7 @@ from accelerate import DistributedDataParallelKwargs
 from model import MultiTaskModel
 from dataloader import build_dataloader
 from utils import length_to_mask, scan_checkpoint
+from transformers import BertTokenizer, BertModel
 
 from datasets import load_from_disk
 

@@ -5,6 +5,8 @@ from datasets import load_dataset, Dataset
 from transformers import BertTokenizer, BertModel
 from pypinyin import pinyin, lazy_pinyin, Style
 import concurrent.futures
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
+cc_cedict.load()
 
 config_path = "Configs/config.yml" # you can change it to anything else
 config = yaml.safe_load(open(config_path))
@@ -33,9 +35,10 @@ def phonemize(text, tokenizer):
     # print(text)
     # print()
     words = tokenizer.tokenize(text)
-    phonemes_bad = [lazy_pinyin(word, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
+    phonemes_bad = [lazy_pinyin(word, style=Style.TAIWAN, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
+    # phonemes_bad = [lazy_pinyin(word, style=Style.TONE3, neutral_tone_with_five=True)[0] if word not in _chinese_punctuation else word for word in words]
 
-    input_ids = [tokenizer.encode(word) for word in words]
+    input_ids = [[tokenizer.encode(word)[1:-1]] for word in words]
     phonemes = [p for p in phonemes_bad]
     
     assert len(input_ids) == len(phonemes)
