@@ -103,7 +103,13 @@ def train():
         
         accelerator.print('Checkpoint loaded.')
         optimizer.load_state_dict(checkpoint['optimizer'])
-    
+    # I add as mentioned in https://huggingface.co/papercup-ai/multilingual-pl-bert
+    try: 
+        del new_state_dict["embeddings.position_ids"]
+    except KeyError:
+        pass
+
+
     bert, optimizer, train_loader = accelerator.prepare(
         bert, optimizer, train_loader
     )
